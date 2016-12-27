@@ -105,7 +105,7 @@ class RCP_CL_User extends WP_User {
 
 		if( isset( $limits ) ) {
 			if( isset( $limits['enabled'] ) && $limits['enabled'] === 'yes' ) {
-				$remaining = (int) $limits['views'] - $this->get_views_count();
+				$remaining = (int) $limits['views'] - $this->get_views_count( $post_type );
 			}else {
 				return -1;
 			}
@@ -147,6 +147,12 @@ class RCP_CL_User extends WP_User {
 
 		if( isset( $limits ) ) {
 			switch( $limits['interval'] ) {
+				case 'min' :
+					$timeframe = 60;
+					break;
+				case 'hour' :
+					$timeframe = 3600;
+					break;
 				case 'day' :
 					$timeframe = 86400;
 					break;
@@ -169,7 +175,7 @@ class RCP_CL_User extends WP_User {
 
 
 
-	public function user_has_viewed( $post_id = 0 ) {
+	public function has_viewed( $post_id = 0 ) {
 		global $wpdb, $rcpcl;
 
 		if( empty( $post_id ) ) {
@@ -214,7 +220,7 @@ class RCP_CL_User extends WP_User {
 
 		$post_type = get_post_type( $post_id );
 
-		if( $this->user_has_viewed( $post_id ) )
+		if( $this->has_viewed( $post_id ) )
 			return false;
 
 		if( $this->get_views_remaining( $post_type ) <= 0 )
@@ -340,63 +346,4 @@ class RCP_CL_User extends WP_User {
 	}
 
 
-
-	private function _set_user_restrictions() {
-		global $wpdb, $rcpcl;
-
-		$record = $wpdb->get_row(
-			$wpdb->prepare( "
-				SELECT * FROM {$rcpcl->table_name} WHERE 
-					`user_id`		  = %d AND 
-					`user_ip`		  = %s AND 
-					`post_type`       = %s AND 
-					`limit_start`    >= %d 
-				ORDER BY `limit_start` DESC
-				LIMIT 1
-			;",
-				absint( $this->ID ),
-				sanitize_text_field( get_current_user_ip() ),
-				sanitize_text_field( $this->get_post_type() ),
-				absint( $this->views_timeframe() )
-			), ARRAY_A 
-		);
-
-		if( $record ) {
-			$this->user_restrictions = $record;
-		}
-	}
-
 }
-
-
-/*
-	public function init() {
-		global $wp_query;
-
-		if( $this->is_crawler() )
-			return;
-
-		if( $wp_query->is_singular() && isset( $wp_query->post->post_type ) ) {
-			$post_type = $wp_query->post->post_type;
-			
-
-				var_dump( $limit );
-
-				if( ! $limit ) {
-					$this->add_limit();
-				}else {
-					$post_type_limits = $this->limits;
-					$view_limit = absint( $post_type_limits['views'] );
-
-					if( absint( $limit['limit_viewed'] ) + 1 > $view_limit ) {
-						add_filter( 'the_content', function( $content ) {
-							return rcp_format_teaser( 'This content is restricted to subscribers' );
-						} );
-					}else {
-						$this->add_view( $limit['id'] );
-					}
-				}
-			}
-		}
-	}
-	*/

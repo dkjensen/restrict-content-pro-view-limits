@@ -44,6 +44,7 @@ $rcpcl = RCP_Content_Limit::instance();
 
 if( is_admin() ) {
 	include RCP_CL_PLUGIN_DIR . 'includes/admin/class-rcp-content-limit-admin-screens.php';
+	include RCP_CL_PLUGIN_DIR . 'includes/admin/class-rcp-content-limit-metaboxes.php';
 }else {
 	include RCP_CL_PLUGIN_DIR . 'includes/class-rcp-content-limit-client.php';
 	include RCP_CL_PLUGIN_DIR . 'includes/view-limit-functions.php';

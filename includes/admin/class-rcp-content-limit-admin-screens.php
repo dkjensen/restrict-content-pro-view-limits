@@ -125,6 +125,8 @@ class RCP_Content_Limit_Admin_Screens {
 						<td>
 							<input type="text" style="width: 40px;" name="_view_limit[<?php print esc_attr( $post_type->name ); ?>][interval_count]" value="<?php print absint( $interval_count ); ?>">
 							<select name="_view_limit[<?php print esc_attr( $post_type->name ); ?>][interval]">
+								<option value="min" <?php selected( 'min', $interval ); ?>><?php _e( 'Minutes(s)', 'rcp' ); ?></option>
+								<option value="hour" <?php selected( 'hour', $interval ); ?>><?php _e( 'Hour(s)', 'rcp' ); ?></option>
 								<option value="day" <?php selected( 'day', $interval ); ?>><?php _e( 'Day(s)', 'rcp' ); ?></option>
 								<option value="week" <?php selected( 'week', $interval ); ?>><?php _e( 'Week(s)', 'rcp' ); ?></option>
 								<option value="month" <?php selected( 'month', $interval ); ?>><?php _e( 'Month(s)', 'rcp' ); ?></option>
