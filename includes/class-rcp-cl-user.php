@@ -3,50 +3,25 @@
 
 class RCP_CL_User extends WP_User {
 
-	protected $views_remaining = 0;
 
-	protected $limits = array();
-
-	protected $user_restrictions = array();
-
-	/*
-	public function __construct( $user_id = 0, $post_type = 'post' ) {
-		global $wp_query;
-
-		$restricted = false;
-		if( $wp_query->is_singular() && isset( $wp_query->post->post_type ) ) {
-			$restricted = true;
-		}
-
-		$restricted = (bool) apply_filters( 'rcp_cl_restrict', $restricted );
-
-		if( $restricted ) {
-			$this->limits = rcp_get_level_limits( $this->get_user_level(), $this->get_post_type() );
-
-			$this->_set_user_restrictions();
-		}
-	}
-	*/
-
-
-	public function set_user_level( $user_level = 0 ) {
-		
-	}
-
-
+	/**
+	 * Returns the users subscription level or the hidden
+	 * guest level if not logged in
+	 * 
+	 * @return integer
+	 */
 	public function get_user_level() {
 		global $rcpcl;
 
 		$user_level = get_user_meta( $this->ID, 'rcp_subscription_level', true );
 
 		if( empty( $user_level ) ) {
-			$user_level = $rcpcl->guest_level;
+			$user_level = rcp_get_guest_level();
 		}
 
 		return absint( $user_level );
 	}
 	
-
 
 	/**
 	 * Returns if the post type has view restrictions enabled
@@ -66,13 +41,21 @@ class RCP_CL_User extends WP_User {
 	}
 
 
-
+	/**
+	 * Get the number of views a user has for a given post type within
+	 * the set timeframe
+	 * 
+	 * @param string $post_type 
+	 * @return integer
+	 */
 	public function get_views_count( $post_type = 'post' ) {
 		global $wpdb, $rcpcl;
 
+		$table = rcp_get_content_limits_db_name();
+
 		$viewed = $wpdb->get_var(
 			$wpdb->prepare( "
-				SELECT limit_viewed FROM {$rcpcl->table_name} WHERE 
+				SELECT limit_viewed FROM {$table} WHERE 
 					`user_id`		  = %d AND 
 					`user_ip`		  = %s AND 
 					`post_type`       = %s AND
@@ -98,7 +81,7 @@ class RCP_CL_User extends WP_User {
 	 * Get how many views remaining for a given post type
 	 * 
 	 * @param string $post_type 
-	 * @return int
+	 * @return integer
 	 */
 	public function get_views_remaining( $post_type = 'post' ) {
 		$limits = rcp_get_level_limits( $this->get_user_level(), $post_type );
@@ -118,10 +101,11 @@ class RCP_CL_User extends WP_User {
 
 
 	/**
-	 * Gets the count of remaining views allowed
+	 * Gets the allowed number of views for a post type within
+	 * the set timeframe
 	 * 
-	 * @param type $post_type 
-	 * @return type
+	 * @param string $post_type 
+	 * @return integer
 	 */
 	public function get_views_allowed( $post_type = 'post' ) {
 		$limits = rcp_get_level_limits( $this->get_user_level(), $post_type );
@@ -139,7 +123,8 @@ class RCP_CL_User extends WP_User {
 	/**
 	 * Gets the timeframe window for limiting views
 	 * 
-	 * @return type
+	 * @param string $post_type 
+	 * @return integer
 	 */
 	public function views_timeframe( $post_type = 'post' ) {
 		$limits    = rcp_get_level_limits( $this->get_user_level(), $post_type );
@@ -174,7 +159,13 @@ class RCP_CL_User extends WP_User {
 	}
 
 
-
+	/**
+	 * Checks whether the user has viewed the specified post
+	 * within the set timeframe
+	 * 
+	 * @param integer $post_id 
+	 * @return boolean
+	 */
 	public function has_viewed( $post_id = 0 ) {
 		global $wpdb, $rcpcl;
 
@@ -184,9 +175,11 @@ class RCP_CL_User extends WP_User {
 
 		$post_type = get_post_type( $post_id );
 
+		$table = rcp_get_content_limits_db_name();
+
 		$viewed = $wpdb->get_var(
 			$wpdb->prepare( "
-				SELECT post_ids FROM {$rcpcl->table_name} WHERE 
+				SELECT post_ids FROM {$table} WHERE 
 					`user_id`		  = %d AND 
 					`user_ip`		  = %s AND 
 					`post_type`       = %s AND 
@@ -210,7 +203,12 @@ class RCP_CL_User extends WP_User {
 	}
 
 
-
+	/**
+	 * Records a viewed post given certain criteria is met
+	 * 
+	 * @param integer $post_id 
+	 * @return boolean
+	 */
 	public function record_view( $post_id = 0 ) {
 		global $wpdb, $rcpcl;
 
@@ -231,9 +229,11 @@ class RCP_CL_User extends WP_User {
 
 		do_action( 'rcp_cl_before_record_view', $post_id );
 
+		$table = rcp_get_content_limits_db_name();
+
 		$row = $wpdb->get_row(
 			$wpdb->prepare( "
-				SELECT * FROM {$rcpcl->table_name} WHERE 
+				SELECT * FROM {$table} WHERE 
 					`user_id`		  = %d AND 
 					`user_ip`		  = %s AND 
 					`post_type`       = %s AND 
@@ -254,7 +254,7 @@ class RCP_CL_User extends WP_User {
 
 			$wpdb->query(
 				$wpdb->prepare( "
-					UPDATE {$rcpcl->table_name} SET
+					UPDATE {$table} SET
 						`last_viewed`     = %d,
 						`limit_viewed`    = `limit_viewed` + 1,
 						`post_ids`        = %s
@@ -270,7 +270,7 @@ class RCP_CL_User extends WP_User {
 		}else {
 			$wpdb->query(
 				$wpdb->prepare( "
-					INSERT INTO {$rcpcl->table_name} SET
+					INSERT INTO {$table} SET
 						`user_id`		  = %d,
 						`user_ip`		  = %s,
 						`last_viewed`     = %d,

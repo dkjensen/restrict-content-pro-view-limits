@@ -1,42 +1,7 @@
 <?php
 
 
-final class RCP_Content_Limit {
-
-	public $table_name          = '';
-
-	public $guest_level         = 0;
-
-	protected static $_instance = null;
-
-	/**
-	 * Late static binding
-	 * 
-	 * @return type
-	 */
-	public static function instance() {
-		if( is_null( self::$_instance ) ) {
-			self::$_instance = new self();
-		}
-
-		return self::$_instance;
-	}
-
-
-	/**
-	 * Initialize the plugin
-	 */
-	protected function __construct() {
-		add_action( 'admin_init', array( $this, 'check_installed' ) );
-		add_action( 'init', array( $this, 'setup' ) );
-
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ) );
-	}
-
-
-	public function admin_scripts() {
-		wp_enqueue_script( 'rcp_cl_admin', RCP_CL_PLUGIN_URL . 'includes/js/admin-scripts.js', array( 'jquery' ), '1.0.0', true );
-	}
+class RCP_Content_Limit {
 
 
 	/**
@@ -51,22 +16,6 @@ final class RCP_Content_Limit {
 		}
 	}
 
-	public function setup() {
-		global $wpdb;
-
-		$prefix = is_plugin_active_for_network( 'restrict-content-pro/restrict-content-pro.php' ) ? '' : $wpdb->prefix;
-
-		$this->table_name  = apply_filters( 'rcp_cl_db_name', $prefix . 'rcp_limits' );
-		$this->guest_level = absint( get_option( 'rcp_cl_guest_level' ) );
-
-		new RCP_Content_Limit_Level();
-
-		if( is_admin() ) {
-			new RCP_Content_Limit_Admin_Screens();
-		}
-		
-	}
-
 
 	/**
 	 * Install database table required to log users' post views
@@ -74,15 +23,17 @@ final class RCP_Content_Limit {
 	public function install() {
 		global $wpdb, $wp_roles;
 
+		$table = rcp_get_content_limits_db_name();
+
 		$db_version = get_option( 'rcp_cl_db_version' );
-		$guest_level = get_option( 'rcp_cl_guest_level' );
+		$guest_level = rcp_get_guest_level();
 
 		if( version_compare( $db_version, RCP_CL_DB_VERSION ) < 0 ) {
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
 			$charset_collate = $wpdb->get_charset_collate();
 
-			$sql = "CREATE TABLE {$this->table_name} (
+			$sql = "CREATE TABLE {$table} (
 				id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				user_id bigint(20) NOT NULL DEFAULT 0,
 				user_ip varchar(255) DEFAULT NULL,
@@ -138,21 +89,4 @@ final class RCP_Content_Limit {
 			wp_die( __( 'Restrict Content Pro must be active in order to activate this plugin.', 'rcp' ) );
 		}
 	}
-
-
-	/**
-	 * Prevent cloning of an instance of the class via the clone operator
-	 * 
-	 * @return type
-	 */
-	private function __clone() {}
-
-
-	/**
-	 * Prevent unserializing of an instance of the class via the global function unserialize()
-	 * 
-	 * @return type
-	 */
-	private function __wakeup() {}
-
 }

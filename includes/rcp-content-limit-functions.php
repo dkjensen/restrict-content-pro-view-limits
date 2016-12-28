@@ -1,6 +1,52 @@
 <?php
 
 
+if( ! function_exists( 'get_current_user_ip' ) ) {
+
+function get_current_user_ip() {
+	$ipaddress = '';
+    if( getenv( 'HTTP_CLIENT_IP' ) ) 
+        $ipaddress = getenv('HTTP_CLIENT_IP');
+    elseif( getenv( 'HTTP_X_FORWARDED_FOR') )
+        $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+    elseif( getenv( 'HTTP_X_FORWARDED') )
+        $ipaddress = getenv('HTTP_X_FORWARDED');
+    elseif( getenv( 'HTTP_FORWARDED_FOR') )
+        $ipaddress = getenv('HTTP_FORWARDED_FOR');
+    elseif( getenv( 'HTTP_FORWARDED') )
+       $ipaddress = getenv('HTTP_FORWARDED');
+    elseif( getenv( 'REMOTE_ADDR') )
+        $ipaddress = getenv('REMOTE_ADDR');
+    else
+        $ipaddress = '';
+
+	return $ipaddress;
+}
+
+}
+
+function rcp_get_level_limits( $subscription_id = 0, $post_type = false ) {
+
+	$limits = get_metadata( 'level', absint( $subscription_id ), 'view_limits', true );
+
+	if( $post_type !== false ) {
+		if( isset( $limits[$post_type] ) ) {
+			$limits = $limits[$post_type];
+		}else {
+			return false;
+		}
+	}
+
+	return (array) $limits;
+
+}
+
+
+function rcp_get_guest_level() {
+	return absint( get_option( 'rcp_cl_guest_level' ) );
+}
+
+
 function rcp_user_views_remaining( $user_id = 0, $post_type = '' ) {
 	if( empty( $user_id ) && is_user_logged_in() ) {
 		$user_id = get_current_user_id();

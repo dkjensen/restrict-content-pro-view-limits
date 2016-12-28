@@ -1,6 +1,50 @@
 <?php
 
 
+/**
+ * Exclude the guest subscription level
+ * 
+ * @param array $levels 
+ * @return levels
+ */
+function rcp_filter_get_levels_guest( $levels ) {
+	global $rcpcl;
+
+	if( ! empty( $levels ) && is_array( $levels ) ) {
+		foreach( $levels as $key => $level ) {
+			if( $level->id == rcp_get_guest_level() ) {
+				unset( $levels[$key] );
+			}
+		}
+	}
+
+	return $levels;
+}
+
+
+/**
+ * Exclude the guest subscription level
+ * 
+ * @param type $levels 
+ * @return mixed 
+ */
+function rcp_filter_get_level_guest( $level ) {
+	global $rcpcl;
+	
+	if( $level == rcp_get_guest_level() ) {
+		return false;
+	}
+
+	return $level;
+}
+
+
+/**
+ * Restrict post content if users viewing limit is reached
+ * 
+ * @param string $content 
+ * @return string
+ */
 function rcp_filter_content_restriction( $content ) {
 	global $rcp_options;
 
