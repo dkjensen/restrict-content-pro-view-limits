@@ -51,7 +51,7 @@ class RCP_CL_User extends WP_User {
 	public function get_views_count( $post_type = 'post' ) {
 		global $wpdb, $rcpcl;
 
-		$table = rcp_get_content_limits_db_name();
+		$table = rcp_get_view_limits_db_name();
 
 		$viewed = $wpdb->get_var(
 			$wpdb->prepare( "
@@ -175,7 +175,7 @@ class RCP_CL_User extends WP_User {
 
 		$post_type = get_post_type( $post_id );
 
-		$table = rcp_get_content_limits_db_name();
+		$table = rcp_get_view_limits_db_name();
 
 		$viewed = $wpdb->get_var(
 			$wpdb->prepare( "
@@ -229,7 +229,7 @@ class RCP_CL_User extends WP_User {
 
 		do_action( 'rcp_cl_before_record_view', $post_id );
 
-		$table = rcp_get_content_limits_db_name();
+		$table = rcp_get_view_limits_db_name();
 
 		$row = $wpdb->get_row(
 			$wpdb->prepare( "

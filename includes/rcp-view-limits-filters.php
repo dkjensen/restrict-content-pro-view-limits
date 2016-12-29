@@ -30,8 +30,8 @@ function rcp_filter_get_levels_guest( $levels ) {
  */
 function rcp_filter_get_level_guest( $level ) {
 	global $rcpcl;
-	
-	if( $level == rcp_get_guest_level() ) {
+
+	if( is_object( $level ) && $level->id == rcp_get_guest_level() ) {
 		return false;
 	}
 

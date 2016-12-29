@@ -6,10 +6,10 @@
  * 
  * @return type
  */
-function rcp_content_limit_admin_menu() {
-	add_submenu_page( 'rcp-members', __( 'View Restrictions', 'rcp' ), __( 'View Restrictions', 'rcp' ), 'rcp_view_view_restrictions', 'rcp-view-restrictions', 'rcp_content_limit_admin_view_restrictions' );
+function rcp_view_limits_admin_menu() {
+	add_submenu_page( 'rcp-members', __( 'View Limits', 'rcp' ), __( 'View Limits', 'rcp' ), 'rcp_view_view_limits', 'rcp-view-limits', 'rcp_view_limits_admin_view_limits' );
 }
-add_action( 'admin_menu', 'rcp_content_limit_admin_menu', 20 );
+add_action( 'admin_menu', 'rcp_view_limits_admin_menu', 20 );
 
 
 /**
@@ -17,17 +17,17 @@ add_action( 'admin_menu', 'rcp_content_limit_admin_menu', 20 );
  * 
  * @return type
  */
-function rcp_content_limit_admin_view_restrictions() {
+function rcp_view_limits_admin_view_limits() {
 	global $rcpcl;
 
-	$page = admin_url( '/admin.php?page=rcp-view-restrictions' );
+	$page = admin_url( '/admin.php?page=rcp-view-limits' );
 	?>
 	<div class="wrap">
 		<?php if( isset( $_GET['edit_restrictions'] ) ) :
-			rcp_content_limit_admin_edit_restrictions();
+			rcp_view_limits_admin_edit_restrictions();
 		else : ?>
 		<h2><?php _e( 'View Restrictions', 'rcp' ); ?></h2>
-		<table class="wp-list-table widefat fixed posts rcp-view-restrictions">
+		<table class="wp-list-table widefat fixed posts rcp-view-limits">
 			<thead>
 				<tr>
 					<th scope="col" class="rcp-cl-name-col column-primary"><?php _e('Name', 'rcp'); ?></th>
@@ -70,7 +70,7 @@ function rcp_content_limit_admin_view_restrictions() {
  * 
  * @return type
  */
-function rcp_content_limit_admin_edit_restrictions() {
+function rcp_view_limits_admin_edit_restrictions() {
 	$level = rcp_get_subscription_details( absint( urldecode( $_GET['edit_restrictions'] ) ) );
 
 	$limits = get_metadata( 'level', absint( urldecode( $_GET['edit_restrictions'] ) ), 'view_limits', true );
@@ -79,7 +79,7 @@ function rcp_content_limit_admin_edit_restrictions() {
 	<div class="wrap">
 		<h2>
 			<?php _e( 'Edit View Restrictions:', 'rcp' ); echo ' ' . stripslashes( $level->name ); ?>
-			<a href="<?php echo admin_url( '/admin.php?page=rcp-view-restrictions' ); ?>" class="add-new-h2">
+			<a href="<?php echo admin_url( '/admin.php?page=rcp-view-limits' ); ?>" class="add-new-h2">
 				<?php _e( 'Cancel', 'rcp' ); ?>
 			</a>
 		</h2>
@@ -146,8 +146,8 @@ function rcp_content_limit_admin_edit_restrictions() {
  * 
  * @return type
  */
-function rcp_content_limit_admin_save() {
-	if( ! is_admin() || ! current_user_can( 'rcp_manage_view_restrictions' )  || ! isset( $_POST['_rcpcl_action'] ) || $_POST['_rcpcl_action'] !== 'save-restrictions' )
+function rcp_view_limits_admin_save() {
+	if( ! is_admin() || ! current_user_can( 'rcp_manage_view_limits' )  || ! isset( $_POST['_rcpcl_action'] ) || $_POST['_rcpcl_action'] !== 'save-restrictions' )
 		return;
 
 	if( check_admin_referer( 'save-restrictions' ) ) {
@@ -159,10 +159,10 @@ function rcp_content_limit_admin_save() {
 
 		$update = $levels->update_meta( $level, 'view_limits', $view_limits );
 
-		add_action( 'admin_notices', 'rcp_content_limit_admin_save_updated' );
+		add_action( 'admin_notices', 'rcp_view_limits_admin_save_updated' );
 	}
 }
-add_action( 'admin_init', 'rcp_content_limit_admin_save' );
+add_action( 'admin_init', 'rcp_view_limits_admin_save' );
 
 
 /**
@@ -170,7 +170,7 @@ add_action( 'admin_init', 'rcp_content_limit_admin_save' );
  * 
  * @return type
  */
-function rcp_content_limit_admin_save_updated() {
+function rcp_view_limits_admin_save_updated() {
 	?>
 
 	<div class="notice notice-success is-dismissible">
@@ -181,7 +181,7 @@ function rcp_content_limit_admin_save_updated() {
 }
 
 
-function rcp_content_limit_admin_scripts() {
+function rcp_view_limits_admin_scripts() {
 	wp_enqueue_script( 'rcp_cl_admin', RCP_CL_PLUGIN_URL . 'includes/js/admin-scripts.js', array( 'jquery' ), '1.0.0', true );
 }
-add_action( 'admin_enqueue_scripts', 'rcp_content_limit_admin_scripts' );
+add_action( 'admin_enqueue_scripts', 'rcp_view_limits_admin_scripts' );

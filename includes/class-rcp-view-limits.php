@@ -1,7 +1,7 @@
 <?php
 
 
-class RCP_Content_Limit {
+class RCP_View_Limits {
 
 
 	/**
@@ -23,7 +23,7 @@ class RCP_Content_Limit {
 	public function install() {
 		global $wpdb, $wp_roles;
 
-		$table = rcp_get_content_limits_db_name();
+		$table = rcp_get_view_limits_db_name();
 
 		$db_version = get_option( 'rcp_cl_db_version' );
 		$guest_level = rcp_get_guest_level();
@@ -55,8 +55,8 @@ class RCP_Content_Limit {
 				$wp_roles = new WP_Roles();
 
 		if( is_object( $wp_roles ) ) {
-			$wp_roles->add_cap( 'administrator', 'rcp_view_view_restrictions' );
-			$wp_roles->add_cap( 'administrator', 'rcp_manage_view_restrictions' );
+			$wp_roles->add_cap( 'administrator', 'rcp_view_view_limits' );
+			$wp_roles->add_cap( 'administrator', 'rcp_manage_view_limits' );
 		}
 
 		if( empty( $guest_level ) ) {
@@ -76,7 +76,7 @@ class RCP_Content_Limit {
 	 * Returns whether or not RCP is active
 	 */
 	public static function rcp_active() {
-		return function_exists( 'rcp_user_can_access' );
+		return is_plugin_active( 'restrict-content-pro/restrict-content-pro.php' );
 	}
 
 

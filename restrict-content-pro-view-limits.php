@@ -1,6 +1,6 @@
 <?php
 /**
- *  Plugin Name: Restrict Content Pro Content Limit
+ *  Plugin Name: Restrict Content Pro - View Limits
  *  Plugin URL: https://restrictcontentpro.com
  *  Description: Limits the number of posts users can view freely before being prompted to subscribe
  *  Version: 1.0.0
@@ -26,7 +26,7 @@ if ( ! function_exists( 'is_plugin_active_for_network' ) ) {
 	require_once ABSPATH . '/wp-admin/includes/plugin.php';
 }
 
-function rcp_get_content_limits_db_name() {
+function rcp_get_view_limits_db_name() {
 	global $wpdb;
 
 	$prefix = is_plugin_active_for_network( 'restrict-content-pro/restrict-content-pro.php' ) ? '' : $wpdb->prefix;
@@ -35,23 +35,32 @@ function rcp_get_content_limits_db_name() {
 }
 
 
+include RCP_CL_PLUGIN_DIR . 'includes/class-rcp-view-limits.php';
+
+
 /**
  * Activation hook used for checking if RCP is activated
  */
-register_activation_hook( __FILE__, array( 'RCP_Content_Limit', 'plugin_activation' ) );
+register_activation_hook( __FILE__, array( 'RCP_View_Limits', 'plugin_activation' ) );
 
 
-include RCP_CL_PLUGIN_DIR . 'includes/class-rcp-content-limit.php';
+/**
+ * Let's make sure RCP is active again...
+ */
+if( ! RCP_View_Limits::rcp_active() ) return;
+
+
 include RCP_CL_PLUGIN_DIR . 'includes/class-rcp-cl-user.php';
-include RCP_CL_PLUGIN_DIR . 'includes/admin/rcp-content-limit-admin-screens.php';
-include RCP_CL_PLUGIN_DIR . 'includes/admin/rcp-content-limit-metaboxes.php';
-include RCP_CL_PLUGIN_DIR . 'includes/rcp-content-limit-filters.php';
-include RCP_CL_PLUGIN_DIR . 'includes/rcp-content-limit-functions.php';
+include RCP_CL_PLUGIN_DIR . 'includes/admin/rcp-view-limits-admin-screens.php';
+include RCP_CL_PLUGIN_DIR . 'includes/admin/rcp-view-limits-metaboxes.php';
+include RCP_CL_PLUGIN_DIR . 'includes/rcp-view-limits-filters.php';
+include RCP_CL_PLUGIN_DIR . 'includes/rcp-view-limits-functions.php';
 
 
-$rcpcl = new RCP_Content_Limit();
 
-if( rcp_get_guest_level() && ( is_admin() && isset( $_GET['page'] ) && $_GET['page'] != 'rcp-view-restrictions' ) ) {
+$rcpcl = new RCP_View_Limits();
+
+if( rcp_get_guest_level() && ( is_admin() && isset( $_GET['page'] ) && $_GET['page'] != 'rcp-view-limits' ) ) {
 	add_filter( 'rcp_get_levels', 'rcp_filter_get_levels_guest', 15 );
 	add_filter( 'rcp_get_level', 'rcp_filter_get_level_guest', 15 );
 }
