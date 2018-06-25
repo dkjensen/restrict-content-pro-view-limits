@@ -155,11 +155,14 @@ function rcp_user_is_restricted( $user_id = 0 ) {
 			$rcp_options['edit_profile'],
 			$rcp_options['update_card']
 		) ) ) {
-			return false;
-		}
+		return false;
+	}
 
 	if( $user->get_views_remaining( $post_type ) === -1 )
-		return false;
+        return false;
+        
+    if( user_can( $user_id, 'publish_posts' ) )
+        return false;
 
 	return true;
 }
