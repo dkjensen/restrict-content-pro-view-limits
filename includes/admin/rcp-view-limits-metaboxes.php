@@ -1,4 +1,9 @@
 <?php
+/**
+ * Post type meta box settings
+ * 
+ * @package restrict-content-pro-view-limits
+ */
 
 
 function rcp_cl_content_limit_metaboxes() {

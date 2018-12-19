@@ -1,4 +1,9 @@
 <?php
+/**
+ * Basic utility functions
+ * 
+ * @package restrict-content-pro-view-limits
+ */
 
 
 if( ! function_exists( 'get_current_user_ip' ) ) {
@@ -146,7 +151,7 @@ function rcp_user_is_restricted( $user_id = 0 ) {
 	if( ! rcp_user_can_access( $user_id, get_queried_object_id() ) )
 		return false;
 
-	$user = new RCP_CL_User( $user_id );
+    $user = new RCP_CL_User( $user_id );
 
 	if( in_array( $obj->ID, array(
 			$rcp_options['registration_page'],

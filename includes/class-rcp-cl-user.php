@@ -1,4 +1,9 @@
 <?php
+/**
+ * User wrapper class
+ * 
+ * @package restrict-content-pro-view-limits
+ */
 
 
 class RCP_CL_User extends WP_User {

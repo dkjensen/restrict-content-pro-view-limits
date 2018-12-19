@@ -1,6 +1,11 @@
 <?php
+/**
+ * Wrapper for utility methods
+ * 
+ * @package restrict-content-pro-view-limits
+ */
 
-
+ 
 class RCP_View_Limits {
 
 

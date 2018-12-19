@@ -1,4 +1,9 @@
 <?php
+/**
+ * Admin screens
+ * 
+ * @package restrict-content-pro-view-limits
+ */
 
 
 /**

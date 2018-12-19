@@ -8,6 +8,8 @@
  *  Author URI: http://dkjensen.com
  *  Text Domain: rcp
  *  Domain Path: languages
+ * 
+ * @package restrict-content-pro-view-limits
 **/
 
 

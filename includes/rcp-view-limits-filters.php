@@ -1,4 +1,9 @@
 <?php
+/**
+ * Functions that filter native RCP functionality
+ * 
+ * @package restrict-content-pro-view-limits
+ */
 
 
 /**
