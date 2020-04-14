@@ -1,0 +1,42 @@
+{
+  "name": "restrict-content-pro-view-limits",
+  "version": "0.0.0-development",
+  "description": "Limits the number of posts users can view freely before being prompted to subscribe",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dkjensen/restrict-content-pro-view-limits"
+  },
+  "author": "David Jensen",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {},
+  "devDependencies": {
+    "@semantic-release/changelog": "^5.0.1",
+    "@semantic-release/commit-analyzer": "^8.0.1",
+    "@semantic-release/npm": "^7.0.5",
+    "@semantic-release/release-notes-generator": "^9.0.1",
+    "semantic-release": "^17.0.4",
+    "semantic-release-version-bump": "^1.4.1"
+  },
+  "release": {
+    "tagFormat": "${version}",
+    "branches": [
+      "master"
+    ],
+    "plugins": [
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": false
+        }
+      ]
+    ],
+    "prepare": [
+      [
+        "semantic-release-version-bump",
+        {
+          "files": "power-over-predators.php"
+        }
+      ]
+    ]
+  }
+}

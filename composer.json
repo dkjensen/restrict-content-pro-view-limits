@@ -1,0 +1,47 @@
+{
+    "name": "dkjensen/restrict-content-pro-viewlimits",
+    "description": "Limits the number of posts users can view freely before being prompted to subscribe",
+    "type": "wordpress-plugin",
+    "license": "GPL-3.0+",
+    "authors": [
+        {
+            "name": "David Jensen",
+            "email": "david@dkensen.com"
+        }
+    ],
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^7",
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.6.2",
+        "phpcompatibility/phpcompatibility-wp": "*",
+        "php-stubs/wordpress-stubs": "^5.4",
+        "phpcompatibility/php-compatibility": "^9.3"
+    },
+    "scripts": {
+        "test": [
+            "phpunit"
+        ],
+        "phpcs": [
+          "phpcs -s -p"
+        ],
+        "phpcs-pre-commit": [
+          "phpcs -s -p -n"
+        ],
+        "phpcbf": [
+          "phpcbf -p"
+        ],
+        "post-install-cmd": [
+            "composer dump-autoload -o"
+        ],
+        "post-update-cmd": [
+            "composer dump-autoload -o"
+        ]
+    },
+    "extra": {
+        "scripts-description": {
+          "test": "Run unit tests",
+          "phpcs": "Analyze code with PHP_CodeSniffer",
+          "phpcbf": "Fix coding standards warnings/errors automatically with PHP Code Beautifier"
+        }
+    }
+}
