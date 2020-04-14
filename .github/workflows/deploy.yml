@@ -14,7 +14,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        npm install
+        npm ci
 
     - name: Run composer install
       run: |
@@ -26,7 +26,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: WordPress Plugin Deploy
-      if: steps.semantic.outputs.new-release-published == 'true'
       uses: 10up/action-wordpress-plugin-deploy@1.4.1
       env:
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
