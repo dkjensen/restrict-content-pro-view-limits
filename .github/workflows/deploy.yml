@@ -12,25 +12,20 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Run composer install
-      run: |
-        composer install --no-dev --prefer-dist
-      
-    - name: Semantic release
-      run: |
-        npm ci
-        npx semantic-release
+    - uses: codfish/semantic-release-action@master
+      id: semantic
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Test
+    - name: Run composer install
       run: |
-        echo "${nextRelease.gitTag}"
-        echo "$nextRelease.gitTag"
+        composer install --no-dev --prefer-dist
 
     - name: WordPress Plugin Deploy
+      if: steps.semantic.outputs.new-release-published == 'true'
       uses: 10up/action-wordpress-plugin-deploy@1.4.1
       env:
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
         SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
         SLUG: rcp-view-limits
+        VERSION: $RELEASE_VERSION
