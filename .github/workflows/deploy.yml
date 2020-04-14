@@ -23,6 +23,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      run: |
+        echo "${nextRelease.gitTag}"
+        echo "$nextRelease.gitTag"
+
     - name: WordPress Plugin Deploy
       uses: 10up/action-wordpress-plugin-deploy@1.4.1
       env:

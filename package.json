@@ -34,7 +34,7 @@
       [
         "semantic-release-version-bump",
         {
-          "files": "power-over-predators.php"
+          "files": "restrict-content-pro-view-limits.php"
         }
       ]
     ]
