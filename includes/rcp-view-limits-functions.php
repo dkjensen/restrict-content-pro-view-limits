@@ -163,13 +163,15 @@ function rcp_user_is_restricted( $user_id = 0 ) {
 		return false;
 	}
 
+	$restricted = true;
+
 	if( $user->get_views_remaining( $post_type ) === -1 )
-        return false;
+        $restricted = false;
         
     if( user_can( $user_id, 'publish_posts' ) )
-        return false;
+        $restricted = false;
 
-	return true;
+	return apply_filters( 'rcp_view_limits_user_is_restricted', $restricted, $obj, $user );
 }
 
 
