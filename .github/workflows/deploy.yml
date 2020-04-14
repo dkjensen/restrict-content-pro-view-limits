@@ -12,14 +12,18 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - uses: codfish/semantic-release-action@master
-      id: semantic
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Install dependencies
+      run: |
+        npm install
 
     - name: Run composer install
       run: |
         composer install --no-dev --prefer-dist
+
+    - uses: codfish/semantic-release-action@master
+      id: semantic
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: WordPress Plugin Deploy
       if: steps.semantic.outputs.new-release-published == 'true'
